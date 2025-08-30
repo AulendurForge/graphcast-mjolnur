@@ -1,0 +1,11 @@
+zarr
+xarray[complete]
+gcsfs
+
+dm-haiku
+jax
+jaxlib
+git+https://github.com/deepmind/graphcast.git
+ax[cuda] -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+matplotlib
+cartopy
