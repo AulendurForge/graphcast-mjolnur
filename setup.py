@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 README = (Path(__file__).parent / "README.md").read_text(encoding="utf-8")
 
 setup(
-    name="graphcast-mjolnur",  # <-- distribution name (safe to pip install from GitHub)
+    name="graphcast-mjolnur",
     version="0.2.0.dev0",
     description="GraphCast with MJOLNUR sidecar models for PM forecasting",
     long_description=README,
@@ -14,15 +14,15 @@ setup(
     license="Apache License, Version 2.0",
     keywords=["GraphCast", "Weather", "Air Quality", "PM2.5", "PM10"],
     url="https://github.com/AulendurForge/graphcast-mjolnur",
-    # Include BOTH upstream graphcast and your mjolnur package
+    # IMPORTANT: include both packages
     packages=find_packages(
         include=["graphcast", "graphcast.*", "mjolnur", "mjolnur.*"]
     ),
     include_package_data=True,
-    python_requires=">=3.10,<3.12",
-    # Core deps: keep upstream GraphCast deps + light IO; avoid pinning CUDA wheels here.
+    # Allow 3.12
+    python_requires=">=3.10,<3.13",
     install_requires=[
-        # --- Upstream GraphCast deps (leave largely as-is) ---
+        # Upstream deps (keep loose; JAX GPU wheel installed separately in Colab)
         "cartopy",
         "chex",
         "colabtools",
@@ -30,7 +30,7 @@ setup(
         "dinosaur-dycore",
         "dm-haiku",
         "dm-tree",
-        "jax",  # In Colab/GPU you'll override with `pip install -U "jax[cuda12]"`
+        "jax",
         "jraph",
         "matplotlib",
         "numpy",
@@ -41,12 +41,11 @@ setup(
         "typing_extensions",
         "xarray",
         "xarray_tensorstore",
-        # --- Useful for both graphcast + mjolnur IO on GCS/Zarr ---
+        # IO/format helpers
         "gcsfs>=2023.9.0",
         "zarr>=2.16.0",
         "netCDF4",
     ],
-    # Optional feature sets; install with: pip install .[sidecar], .[regrid], etc.
     extras_require={
         "sidecar": [
             "flax>=0.7.0",
@@ -54,8 +53,6 @@ setup(
         ],
         "regrid": [
             "xesmf>=0.8.5",
-            # For highest-accuracy conservative regridding you may also need ESMPy:
-            # "esmpy>=8.6.0",
         ],
         "dev": [
             "pytest",
@@ -63,15 +60,12 @@ setup(
             "black",
             "mypy",
         ],
-        # Everything:
         "all": [
             "flax>=0.7.0",
             "optax>=0.2.2",
             "xesmf>=0.8.5",
-            # "esmpy>=8.6.0",
         ],
     },
-    # Expose your convenience scripts (adjust targets if filenames differ)
     entry_points={
         "console_scripts": [
             "cams-to-zarr=mjolnur.scripts.cams_to_zarr:main",
@@ -85,6 +79,7 @@ setup(
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Scientific/Engineering :: Atmospheric Science",
         "Topic :: Scientific/Engineering :: Physics",
